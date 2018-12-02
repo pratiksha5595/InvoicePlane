@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -81,6 +82,12 @@ public class AddClient {
     WebElement LanguageText;
 
 
+
+    @FindBy(xpath = "//*[@id=\"select2-client_grnder-container\"]")
+    WebElement Genderdd;
+
+    @FindBy(xpath = "//*[@id=\"select2-client_grnder-results\"]")
+    WebElement Gendertxt;
 
 
     @FindBy(xpath = "//input[@name=\"client_birthdate\"]")
@@ -177,7 +184,17 @@ public class AddClient {
         Csavebtn.click();
     }
 
-    public void setDate(String setDataStr) throws ParseException {
+    public void setDate(String setDataStrRow) throws ParseException {
+
+
+        SimpleDateFormat sdRow = new SimpleDateFormat("dd-MMM-yyyy");
+
+        Date setDateRow = sdRow.parse(setDataStrRow);
+
+        SimpleDateFormat sdStr = new SimpleDateFormat("dd/MM/yyyy") ;
+
+        String setDataStr = sdStr.format(setDateRow);
+
 
       //  String setDataStr = "05/05/2017"; //dd/MM/yyyy
         driver.findElement(By.xpath("//input[@name=\"client_birthdate\"]")).click();
@@ -235,5 +252,13 @@ public class AddClient {
         LanguageDD.click();
         LanguageText.sendKeys(language);
         driver.findElement(By.xpath("//li[contains(@id,'"+language.toLowerCase()+"')]")).click();
+    }
+
+    public void setGender(String gender)
+    {
+        Genderdd.click();
+        Gendertxt.sendKeys(gender);
+        driver.findElement(By.xpath("//li[contains(text(),'"+gender.toLowerCase()+"']")).click();
+
     }
 }

@@ -25,7 +25,7 @@ public class LoginTest {
         driver.get(url);
 
         Login login = new Login(driver);
-        login.setTxtEmail("radha.padwal@gmail.com");
+        login.setTxtEmail("amolujagare@gmail.com");
         login.setTxtPassword("admin123");
         login.clickLogin();
 
