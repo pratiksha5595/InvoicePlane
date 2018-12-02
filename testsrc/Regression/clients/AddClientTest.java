@@ -80,6 +80,7 @@ public class AddClientTest {
         HSSFWorkbook workbook = new HSSFWorkbook(fileInputStream);
         HSSFSheet worksheet = workbook.getSheet("sheet1");
 
+        return getData();
     }
 
 
