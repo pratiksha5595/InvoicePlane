@@ -4,15 +4,23 @@ import com.invoiceplane.pages.Login;
 import com.invoiceplane.pages.Menu;
 import com.invoiceplane.pages.clients.AddClient;
 import com.invoiceplane.utlities.Driver;
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
+import com.relevantcodes.extentreports.NetworkMode;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.testng.asserts.Assertion;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +28,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
+
+import static com.invoiceplane.utlities.TakeScreenshot.takeScreenshot;
 
 /**
  * Created by dell on 11/18/2018.
@@ -27,24 +38,30 @@ import java.util.ResourceBundle;
 public class AddClientTest {
 
     WebDriver driver = Driver.getDriver(Driver.DriverTypes.CHROME);
-
+    ExtentReports extent;
     @BeforeClass
 
     public void login() {
         ResourceBundle rb = ResourceBundle.getBundle("Invoiceplane");
 
+        extent = new ExtentReports("Reports/report.html",true, NetworkMode.OFFLINE);
+
+
         String url = rb.getString("url");
 
         driver.get(url);
+
+
+
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         Login login = new Login(driver);
         login.setTxtEmail("amolujagare@gmail.com");
         login.setTxtPassword("admin123");
         login.clickLogin();
 
-        Menu menu = new Menu(driver);
 
-        menu.ClickAddClient();
+
 
     }
 
@@ -52,33 +69,99 @@ public class AddClientTest {
     public void addclientTest(String Cname, String Csurname, String language, String Sadd, String Sadd2, String City,
                               String State, String Zip_code, String Country, String Phone_no, String Fax_no,
                               String Mobile_no, String Email, String Website, String Gender, String Bdate,
-                              String Vat_id, String Tax_code) throws ParseException {
+                              String Vat_id, String Tax_code, String Expected_Result, String Actual_Result) throws ParseException, IOException {
+
+
+        ExtentTest test = extent.startTest("Login  test","to check login functionality using valid data");
+        Menu menu = new Menu(driver);
+
+        menu.ClickAddClient();
+
+        test.log(LogStatus.INFO,"clicking on addclient");
 
         AddClient addClient = new AddClient(driver);
 
         addClient.setTxtclientName(Cname);
+       test.log(LogStatus.INFO,"add client name");
         addClient.CheckBox();
+       test.log(LogStatus.INFO,"check checkbox");
         addClient.setTxtclientSurname(Csurname);
+       test.log(LogStatus.INFO,"add surname");
         addClient.setLanguage(language);
+       test.log(LogStatus.INFO,"select language");
         addClient.Addresslin1(Sadd);
-        addClient.Addresslin1(Sadd2);
+       test.log(LogStatus.INFO,"add address line1");
+        addClient.Addresslin2(Sadd2);
+       test.log(LogStatus.INFO,"add address line2");
         addClient.setCity(City);
+       test.log(LogStatus.INFO,"add city");
         addClient.setState(State);
+       test.log(LogStatus.INFO,"add state");
         addClient.setZip(Zip_code);
+      test.log(LogStatus.INFO,"add zip code");
         addClient.setCountry(Country);
+       test.log(LogStatus.INFO,"add country");
         addClient.setPhoneNum(Phone_no);
+       test.log(LogStatus.INFO,"add phone number");
         addClient.setFaxNum(Fax_no);
+       test.log(LogStatus.INFO,"add fax number");
         addClient.mobile(Mobile_no);
+       test.log(LogStatus.INFO,"add mobile number");
         addClient.Emailadd(Email);
+       test.log(LogStatus.INFO,"add email");
         addClient.Webadd(Website);
-        // addClient.setGender(Gender);
-        addClient.setDate(Bdate);
+       test.log(LogStatus.INFO,"add website");
+       // addClient.setGender(Gender);
+       // addClient.setDate(Bdate);
         addClient.VatId(Vat_id);
+       test.log(LogStatus.INFO,"add vat id");
         addClient.TaxId(Tax_code);
+       test.log(LogStatus.INFO,"add tax code");
+         addClient.clickCsave();
+       test.log(LogStatus.INFO,"click on save button");
 
-        addClient.clickCsave();
+        //System.out.println(Expected_Result);
+
+        String actual ="";
+
+        try {
+             actual = driver.findElement(By.xpath(Actual_Result)).getText();
+
+
+        }
+
+        catch (Exception e){
+            e.printStackTrace();
+        }
+           try {
+               Assert.assertEquals(actual, Expected_Result, "verification failed");
+               test.log(LogStatus.PASS, "test is pass");
+
+                takeScreenshot(driver);
+                       test.log(LogStatus.INFO, "Snapshot below: " + test.addScreenCapture("./screenshots/"+takeScreenshot(driver)));
+
+           }
+
+           catch (AssertionError e){
+                test.log(LogStatus.FAIL, "test is fail");
+
+                 takeScreenshot(driver);
+                        test.log(LogStatus.INFO, "Snapshot below: " + test.addScreenCapture("./screenshots/"+takeScreenshot(driver)));
+
+           }
+
+             extent.endTest(test);
+
 
     }
+
+       @AfterClass
+       public  void result(){
+
+        extent.flush();
+
+       }
+
 
     @DataProvider
     public Object[][] getData() throws IOException {
@@ -89,7 +172,7 @@ public class AddClientTest {
 
         int rowCount= worksheet.getPhysicalNumberOfRows();
 
-        Object[] [] data = new Object[rowCount-1][18];
+        Object[] [] data = new Object[rowCount-1][20];
 
         for (int i=1; i<rowCount; i++){
 
@@ -194,15 +277,15 @@ public class AddClientTest {
                 data[i-1][13] = "";
             else {
                 Website.setCellType(CellType.STRING);
-                data[i-1][13] = Sadd2.getStringCellValue();
+                data[i-1][13] = Website.getStringCellValue();
             }
-//            HSSFCell Gender = row.getCell(0);
-//            if (Gender == null)
-//                data[i-1][14] = "";
-//            else {
-//                Gender.setCellType(CellType.STRING);
-//                data[i-1][14] = Gender.getStringCellValue();
-//            }
+           HSSFCell Gender = row.getCell(14);
+            if (Gender == null)
+                data[i-1][14] = "";
+            else {
+                Gender.setCellType(CellType.STRING);
+                data[i-1][14] = Gender.getStringCellValue();
+            }
             HSSFCell Bdate = row.getCell(15);
             if (Bdate == null)
                 data[i-1][15] = "";
@@ -223,6 +306,22 @@ public class AddClientTest {
             else {
                 Tax_code.setCellType(CellType.STRING);
                 data[i-1][17] = Tax_code.getStringCellValue();
+            }
+
+            HSSFCell Expected_Result = row.getCell(18);
+            if (Expected_Result == null)
+                data[i-1][18] = "";
+            else {
+                Expected_Result.setCellType(CellType.STRING);
+                data[i-1][18] = Expected_Result.getStringCellValue();
+            }
+
+            HSSFCell Actual_Result = row.getCell(19);
+            if (Actual_Result == null)
+                data[i-1][19] = "";
+            else {
+                Actual_Result.setCellType(CellType.STRING);
+                data[i-1][19] = Actual_Result.getStringCellValue();
             }
 
         }

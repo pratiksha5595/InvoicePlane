@@ -13,13 +13,20 @@ public class Login {
     WebDriver driver;
 
     @FindBy (name = "email")
-    WebElement txtEmail;
+    public WebElement txtEmail;
 
     @FindBy (name = "password")
-    WebElement txtPassword;
+    public WebElement txtPassword;
 
     @FindBy (xpath = "//button[@type=\"submit\"]")
-    WebElement btnLogin;
+    public WebElement btnLogin;
+
+    @FindBy (xpath = "//label[text()='Email']")
+    public WebElement lblEmail;
+
+    @FindBy (xpath = "//label[text()='Password']")
+    public WebElement lblpassword;
+
 
 
     public Login(WebDriver driver)

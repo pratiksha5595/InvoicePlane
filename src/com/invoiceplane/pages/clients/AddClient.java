@@ -13,6 +13,7 @@ import sun.java2d.pipe.SpanShapeRenderer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by dell on 11/17/2018.
@@ -20,6 +21,7 @@ import java.util.Date;
 public class AddClient {
 
     WebDriver driver;
+
 
     @FindBy(xpath = "//*[@name=\"client_name\"]")
     WebElement ClientName;
@@ -83,15 +85,15 @@ public class AddClient {
 
 
 
-    @FindBy(xpath = "//*[@id=\"select2-client_grnder-container\"]")
-    WebElement Genderdd;
+    @FindBy(xpath = "//*[@class=\"select2-selection__rendered\"]")  //class="select2-selection__rendered"
+    WebElement Genderadd;
 
-    @FindBy(xpath = "//*[@id=\"select2-client_grnder-results\"]")
+    @FindBy(xpath = "//input[@class=\"select2-search__field\"]")
     WebElement Gendertxt;
 
 
     @FindBy(xpath = "//input[@name=\"client_birthdate\"]")
-    WebElement SeteDate;
+    WebElement date;
 
     public AddClient(WebDriver driver)
     {
@@ -194,10 +196,7 @@ public class AddClient {
         SimpleDateFormat sdStr = new SimpleDateFormat("dd/MM/yyyy") ;
 
         String setDataStr = sdStr.format(setDateRow);
-
-
-      //  String setDataStr = "05/05/2017"; //dd/MM/yyyy
-        driver.findElement(By.xpath("//input[@name=\"client_birthdate\"]")).click();
+        date.click();
         String currDateStr = driver.findElement(By.xpath("//th[contains(text(),'December')]")).getText(); //MM/yyyy
 
         SimpleDateFormat sdSetDate = new SimpleDateFormat("dd/MM/yyyy");
@@ -256,9 +255,10 @@ public class AddClient {
 
     public void setGender(String gender)
     {
-        Genderdd.click();
+       // driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        Genderadd.click();
         Gendertxt.sendKeys(gender);
-        driver.findElement(By.xpath("//li[contains(text(),'"+gender.toLowerCase()+"']")).click();
+        driver.findElement(By.xpath("//*[contains(@class,\"highlighted\"]")).click();
 
     }
 }
